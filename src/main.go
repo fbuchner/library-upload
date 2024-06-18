@@ -44,6 +44,8 @@ func main() {
 			}
 		}
 
+		fmt.Println("all good")
+
 		c.JSON(http.StatusOK, gin.H{
 			"message": fmt.Sprintf("Uploaded %d file(s) successfully into folder %s.", len(files), folder),
 		})
@@ -56,20 +58,13 @@ func main() {
 func verifyPath(path, basepath string) (string, error) {
 
 	c := filepath.Clean(path)
-	fmt.Println("Cleaned path: " + c)
 
-	r, err := filepath.EvalSymlinks(c)
+	err := inTrustedRoot(c, basepath)
 	if err != nil {
 		fmt.Println("Error " + err.Error())
 		return c, errors.New("unsafe or invalid path specified")
-	}
-
-	err = inTrustedRoot(r, basepath)
-	if err != nil {
-		fmt.Println("Error " + err.Error())
-		return r, errors.New("unsafe or invalid path specified")
 	} else {
-		return r, nil
+		return c, nil
 	}
 }
 func inTrustedRoot(path string, trustedRoot string) error {
