@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Library Upload</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <h1>Upload one or more files into your library</h1>
+        <br><br>
+
+        <form id="uploadForm" enctype="multipart/form-data">
+            <label for="folder">Title (Subfolder):</label>
+            <input type="text" id="folder" name="folder"><br>
+            
+            <label for="files">Files:</label>
+            <input type="file" id="files" name="files" multiple hidden>
+            <div class="drop-zone" id="drop-zone">Drag & Drop files here or click to select files</div>
+            <br><br>
+            <input type="submit" value="Submit">
+        </form>
+        <br>
+        <div id="messageBox"></div>
+    </div>
+
+<script>
+    const dropZone = document.getElementById('drop-zone');
+    const fileInput = document.getElementById('files');
+
+    dropZone.addEventListener('click', () => {
+        fileInput.click();
+    });
+
+    dropZone.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        dropZone.classList.add('dragover');
+    });
+
+    dropZone.addEventListener('dragleave', () => {
+        dropZone.classList.remove('dragover');
+    });
+
+    dropZone.addEventListener('drop', (e) => {
+        e.preventDefault();
+        dropZone.classList.remove('dragover');
+        if (e.dataTransfer.files.length) {
+            fileInput.files = e.dataTransfer.files;
+        }
+    });
+
+    fileInput.addEventListener('change', () => {
+        if (fileInput.files.length) {
+            dropZone.textContent = `${fileInput.files.length} file(s) selected`;
+        } else {
+            dropZone.textContent = 'Drag & Drop files here or click to select files';
+        }
+    });
+
+    // Function to reset the file input and drop zone text
+    function resetFileInputAndDropZone() {
+        fileInput.value = ''; // Clear selected files from file input
+        dropZone.textContent = 'Drag & Drop files here or click to select files'; // Reset drop zone text
+    }
+
+    $(document).ready(function() {
+        $('#uploadForm').submit(function(event) {
+            event.preventDefault();
+            
+            var formData = new FormData($(this)[0]);
+            
+            $.ajax({
+                url: '/upload',
+                type: 'POST',
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function(response) {
+                    $('#messageBox').text(response.message);
+                    resetFileInputAndDropZone(); // Reset file input and drop zone
+                    $('#uploadForm')[0].reset(); // Reset the form
+                },
+                error: function(error) {
+                    $('#messageBox').text("Upload error");
+                    alert('Error: ' + error.responseText);
+                }
+            });
+        });
+    });
+</script>
+</body>
+</html>
