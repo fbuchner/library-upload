@@ -44,8 +44,6 @@ func main() {
 			}
 		}
 
-		fmt.Println("all good")
-
 		c.JSON(http.StatusOK, gin.H{
 			"message": fmt.Sprintf("Uploaded %d file(s) successfully into folder %s.", len(files), folder),
 		})
