@@ -2,10 +2,11 @@ version: '3.8'
 
 services:
   library-upload:
-    build: .
+    image: ghcr.io/fbuchner/library-upload:latest
     ports:
       #Change the part before : to the desired port on your server
       - "8080:8080"
     volumes:
       #Change the part before : to your system path where files should be uploaded into
       - /path/to/library:/library
+    restart: unless-stopped

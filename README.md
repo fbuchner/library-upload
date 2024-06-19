@@ -44,3 +44,10 @@ The application is also dockerized, so you can build the container as needed. Fo
 ```shell
 docker build --tag library-upload .
 ```
+
+## Setup
+The easiest way to deploy library-upload is to run the pre-built docker container. Simply use the docker-compose file or run it directly via docker. Make sure to edit the path to your library and chose a different port mapping in case the port is already in use on your machine.
+```shell
+docker run -d --name library-upload -p 8080:8080 -v /path/to/library:/library --restart unless-stopped ghcr.io/fbuchner/library-upload:latest
+```
+You can also run the program directly from the compiled binary. Due to the access to application having access to the file system I recommend chosing the dockerized version as an additional security layer.
